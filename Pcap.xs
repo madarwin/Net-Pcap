@@ -1069,3 +1069,60 @@ pcap_sendqueue_transmit(p, queue, sync)
     pcap_send_queue * queue
     int sync
 
+u_int
+pcap_set_immediate_mode(p, imm)
+   pcap_t *p
+   int imm
+
+u_int
+pcap_set_snaplen(p, snaplen)
+   pcap_t *p
+   int snaplen
+
+u_int
+pcap_set_timeout(p, to_ms)
+   pcap_t *p
+   int to_ms
+
+u_int
+pcap_set_promisc(p, promisc)
+   pcap_t *p
+   int promisc
+
+
+u_int
+pcap_activate(p)
+   pcap_t *p
+
+pcap_t *
+pcap_create(device, err)
+	const char *device
+	SV *err;
+
+	CODE:
+		if (SvROK(err)) {
+            char    *errbuf = NULL;
+            SV      *err_sv = SvRV(err);
+
+            Newx(errbuf, PCAP_ERRBUF_SIZE+1, char);
+#ifdef _MSC_VER
+            /* Net::Pcap hangs when to_ms == 0 under ActivePerl/MSVC */
+            if (to_ms == 0)
+                to_ms = 1;
+#endif
+			RETVAL = pcap_create(device, errbuf);
+
+			if (RETVAL == NULL) {
+				sv_setpv(err_sv, errbuf);
+			} else {
+				err_sv = &PL_sv_undef;
+			}
+
+			safefree(errbuf);
+
+		} else
+			croak("arg2 not a reference");
+
+	OUTPUT:
+		err
+		RETVAL
