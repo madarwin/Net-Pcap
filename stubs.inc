@@ -528,6 +528,90 @@ struct pcap_samp *pcap_setsampling(pcap_t *p) {
 }
 #endif
 
+#ifndef HAVE_PCAP_CREATE
+#ifdef __GNUC__
+#warning "the function pcap_create() is not available"
+#endif
+#ifdef _MSC_VER
+#pragma message( "Warning: the function pcap_create() is not available" )
+#endif
+pcap_t * pcap_create(const char *source, char *err);
+pcap_t * pcap_create(const char *source, char *err) {
+FUNCTION_NOT_IMPLEMENTED_ERROR(pcap_create)
+return NULL;
+}
+#endif
+
+#ifndef HAVE_PCAP_SET_IMMEDIATE_MODE
+#ifdef __GNUC__
+#warning "the function pcap_set_immediate_mode() is not available"
+#endif
+#ifdef _MSC_VER
+#pragma message( "Warning: the function pcap_set_immediate_mode() is not available" )
+#endif
+int pcap_set_immediate_mode(pcap_t *p, int mode);
+int pcap_set_immediate_mode(pcap_t *p, int mode) {
+FUNCTION_NOT_IMPLEMENTED_ERROR(pcap_set_immediate_mode)
+return -1;
+}
+#endif
+
+#ifndef HAVE_PCAP_ACTIVATE
+#ifdef __GNUC__
+#warning "the function pcap_activate() is not available"
+#endif
+#ifdef _MSC_VER
+#pragma message( "Warning: the function pcap_activate() is not available" )
+#endif
+int pcap_activate(pcap_t *p);
+int pcap_activate(pcap_t *p) {
+FUNCTION_NOT_IMPLEMENTED_ERROR(pcap_activate)
+return -1;
+}
+#endif
+
+#ifndef HAVE_PCAP_SET_SNAPLEN
+#ifdef __GNUC__
+#warning "the function pcap_set_snaplen() is not available"
+#endif
+#ifdef _MSC_VER
+#pragma message( "Warning: the function pcap_set_snaplen() is not available" )
+#endif
+int pcap_set_snaplen(pcap_t *p, int snaplen);
+int pcap_set_snaplen(pcap_t *p, int snaplen) {
+FUNCTION_NOT_IMPLEMENTED_ERROR(pcap_set_snaplen)
+return -1;
+}
+#endif
+
+#ifndef HAVE_PCAP_SET_TIMEOUT
+#ifdef __GNUC__
+#warning "the function pcap_set_timeout() is not available"
+#endif
+#ifdef _MSC_VER
+#pragma message( "Warning: the function pcap_set_timeout() is not available" )
+#endif
+int pcap_set_timeout(pcap_t *p, int to_ms);
+int pcap_set_timeout(pcap_t *p, int to_ms) {
+FUNCTION_NOT_IMPLEMENTED_ERROR(pcap_set_timeout)
+return -1;
+}
+#endif
+
+#ifndef HAVE_PCAP_SET_PROMISC
+#ifdef __GNUC__
+#warning "the function pcap_set_promisc() is not available"
+#endif
+#ifdef _MSC_VER
+#pragma message( "Warning: the function pcap_set_promisc() is not available" )
+#endif
+int pcap_set_promisc(pcap_t *p, int promisc);
+int pcap_set_promisc(pcap_t *p, int promisc) {
+FUNCTION_NOT_IMPLEMENTED_ERROR(pcap_set_promisc)
+return -1;
+}
+#endif
+
 
 /*
 
