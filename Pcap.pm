@@ -33,6 +33,7 @@ my @func_short_names = qw(
     lib_version  createsrcstr  parsesrcstr  open  setbuff  setuserbuffer
     setmode  setmintocopy  getevent  sendpacket
     sendqueue_alloc  sendqueue_queue  sendqueue_transmit
+    set_immediate_mode activate create set_timeout set_promisc set_snaplen
 );
 
 my @func_long_names = map { "pcap_$_" } @func_short_names;
@@ -110,6 +111,7 @@ my @func_long_names = map { "pcap_$_" } @func_short_names;
             createsrcstr  parsesrcstr
             setbuff  setuserbuffer  setmode  setmintocopy  getevent  sendpacket
             sendqueue_alloc  sendqueue_queue  sendqueue_transmit
+            set_immediate_mode activate create set_timeout set_promisc set_snaplen
         )], 
     );
 
