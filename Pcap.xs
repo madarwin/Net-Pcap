@@ -1100,28 +1100,24 @@ pcap_create(device, err)
 	SV *err;
 
 	CODE:
-		if (SvROK(err)) {
+	if (SvROK(err)) {
             char    *errbuf = NULL;
             SV      *err_sv = SvRV(err);
 
             Newx(errbuf, PCAP_ERRBUF_SIZE+1, char);
-#ifdef _MSC_VER
-            /* Net::Pcap hangs when to_ms == 0 under ActivePerl/MSVC */
-            if (to_ms == 0)
-                to_ms = 1;
-#endif
-			RETVAL = pcap_create(device, errbuf);
+	
+	    RETVAL = pcap_create(device, errbuf);
 
-			if (RETVAL == NULL) {
-				sv_setpv(err_sv, errbuf);
-			} else {
-				err_sv = &PL_sv_undef;
-			}
+	    if (RETVAL == NULL) {
+		sv_setpv(err_sv, errbuf);
+	    } else {
+		err_sv = &PL_sv_undef;
+	    }
 
-			safefree(errbuf);
+	    safefree(errbuf);
 
-		} else
-			croak("arg2 not a reference");
+	} else
+	   croak("arg2 not a reference");
 
 	OUTPUT:
 		err
