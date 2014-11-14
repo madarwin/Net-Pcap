@@ -1051,6 +1051,22 @@ than the size parameter, an error occurred during the send. The error can
 be caused by a driver/adapter problem or by an inconsistent/bogus send
 queue.
 
+=item B<pcap_set_immediate_mode($pcap, $imm)>
+
+=item B<pcap_activate($pcap)>
+
+This function is used to activate a packet capture handle to look at
+packets on the network, with the options that were set on the handle
+being in effect.
+
+=item B<pcap_create($source, \$err)>
+
+=item B<pcap_set_timeout($pcap, $to_ms)>
+
+=item B<pcap_set_promisc($pcap, $promisc)>
+
+=item B<pcap_set_snaplen($pcap, $snaplen)>
+
 =back
 
 
