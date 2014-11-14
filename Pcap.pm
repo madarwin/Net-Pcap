@@ -50,7 +50,7 @@ my @func_long_names = map { "pcap_$_" } @func_short_names;
 
 {
     no strict "vars";
-    $VERSION = '0.17';
+    $VERSION = '0.18';
 
     @ISA = qw(Exporter);
 
