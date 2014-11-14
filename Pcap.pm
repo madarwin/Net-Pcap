@@ -1053,6 +1053,13 @@ queue.
 
 =item B<pcap_set_immediate_mode($pcap, $imm)>
 
+This function sets whether immediate mode should be set on a capture
+handle when the handle is activated. If immediate_mode is non-zero,
+immediate mode will be set, otherwise it will not be set.  
+
+The return value is 0 on success or PCAP_ERROR_ACTIVATED if called
+on a capture handle that has been activated.  
+
 =item B<pcap_activate($pcap)>
 
 This function is used to activate a packet capture handle to look at
@@ -1061,11 +1068,39 @@ being in effect.
 
 =item B<pcap_create($source, \$err)>
 
+This function is used to create a packet capture handle to look at packets
+on the network. source is a string that specifies the network device to
+open; on Linux systems with 2.2 or later kernels, a source argument of 
+"any" or NULL can be used to capture packets from all interfaces.
+
+The returned handle must be activated with pcap_activate() before packets
+can be captured with it; options for the capture, such as promiscuous 
+mode, can be set on the handle before activating it. 
+
 =item B<pcap_set_timeout($pcap, $to_ms)>
+
+This function sets the read timeout that will be used on a capture handle
+when the handle is activated to to_ms, which is in units of milliseconds.  
+
+The return value is 0 on success or PCAP_ERROR_ACTIVATED if called on a
+capture handle that has been activated.  
 
 =item B<pcap_set_promisc($pcap, $promisc)>
 
+This function sets whether promiscuous mode should be set on a capture
+handle when the handle is activated. If promisc is non-zero, promiscuous
+mode will be set, otherwise it will not be set.  
+
+The return value is 0 on success or PCAP_ERROR_ACTIVATED if called on a
+capture handle that has been activated.  
+
 =item B<pcap_set_snaplen($pcap, $snaplen)>
+
+This function sets the snapshot length to be used on a capture handle
+when the handle is activated to snaplen.  
+
+The return value is 0 on success or PCAP_ERROR_ACTIVATED if called on
+a capture handle that has been activated.  
 
 =back
 
