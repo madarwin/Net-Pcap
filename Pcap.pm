@@ -15,6 +15,7 @@
 #
 package Net::Pcap;
 use strict;
+use warnings;
 use Exporter ();
 use Carp;
 
@@ -24,7 +25,7 @@ my @func_short_names = qw(
     lookupdev  findalldevs  lookupnet
     open_live  open_dead  open_offline  loop  breakloop  close  dispatch
     next  next_ex  compile  compile_nopcap  setfilter  freecode
-    setnonblock  getnonblock
+    offline_filter  setnonblock  getnonblock
     dump_open  dump  dump_file  dump_flush  dump_close
     datalink  set_datalink  datalink_name_to_val  datalink_val_to_name
     datalink_val_to_description
@@ -102,6 +103,7 @@ my @func_long_names = map { "pcap_$_" } @func_short_names;
             open_live  open_dead  open_offline
             dump_open  dump_close  dump_file  dump_flush
             compile  compile_nopcap  setfilter  freecode
+            offline_filter  setnonblock  getnonblock
             dispatch  next_ex  loop  breakloop
             datalink  set_datalink  datalink_name_to_val  
             datalink_val_to_name  datalink_val_to_description
@@ -204,13 +206,15 @@ sub findalldevs {
 
 __END__
 
+=encoding UTF-8
+
 =head1 NAME
 
-Net::Pcap - Interface to pcap(3) LBL packet capture library
+Net::Pcap - Interface to the pcap(3) LBL packet capture library
 
 =head1 VERSION
 
-Version 0.17
+Version 0.18
 
 =head1 SYNOPSIS
 
@@ -265,7 +269,7 @@ as of version 0.17, C<Net::Pcap> no longer modifies C<PL_signals> by
 itself, but provides facilities so the user has full control of how
 signals are delivered.
 
-First, there C<pcap_perl_settings()> function allows to select how
+First, the C<pcap_perl_settings()> function allows one to select how
 signals are handled:
 
     pcap_perl_settings(PERL_SIGNALS_UNSAFE);
@@ -626,6 +630,12 @@ capture descriptor C<$pcap>.
 
 Used to free the allocated memory used by a compiled filter, as created 
 by C<pcap_compile()>. 
+
+
+=item B<pcap_offline_filter($filter, \%header, $packet)>
+
+Check whether C<$filter> matches the packet described by header C<%header>
+and packet data C<$packet>. Returns true if the packet matches.
 
 
 =item B<pcap_setnonblock($pcap, $mode, \$err)>
@@ -1051,6 +1061,8 @@ than the size parameter, an error occurred during the send. The error can
 be caused by a driver/adapter problem or by an inconsistent/bogus send
 queue.
 
+=back
+
 =item B<pcap_set_immediate_mode($pcap, $imm)>
 
 This function sets whether immediate mode should be set on a capture
@@ -1094,6 +1106,10 @@ mode will be set, otherwise it will not be set.
 The return value is 0 on success or PCAP_ERROR_ACTIVATED if called on a
 capture handle that has been activated.  
 
+=item B<pcap_setsampling($pcap)>
+
+This function sets 
+
 =item B<pcap_set_snaplen($pcap, $snaplen)>
 
 This function sets the snapshot length to be used on a capture handle
@@ -1103,7 +1119,6 @@ The return value is 0 on success or PCAP_ERROR_ACTIVATED if called on
 a capture handle that has been activated.  
 
 =back
-
 
 =head1 CONSTANTS
 
@@ -1198,21 +1213,6 @@ which expect one or more of its arguments to be references.
 
 =back
 
-
-=head1 LIMITATIONS
-
-The following limitations apply to this version of C<Net::Pcap>.
-
-=over
-
-=item *
-
-At present, only one callback function and user data scalar can be
-current at any time as they are both stored in global variables.
-
-=back
-
-
 =head1 BUGS
 
 Please report any bugs or feature requests to
@@ -1260,15 +1260,19 @@ for examples on using this module.
 
 =head2 Perl Modules
 
+the L<NetPacket> or L<Net::Frame> modules to assemble and disassemble packets.
+
 L<Net::Pcap::Reassemble> for reassembly of TCP/IP fragments.
 
 L<POE::Component::Pcap> for using C<Net::Pcap> within POE-based programs.
+
+L<AnyEvent::Pcap> for using C<Net::Pcap> within AnyEvent-based programs.
 
 L<Net::Packet> or L<NetPacket> for decoding and creating network packets.
 
 L<Net::Pcap::Easy> is a module which provides an easier, more Perl-ish
 API than C<Net::Pcap> and integrates some facilities from L<Net::Netmask>
-and C<NetPacket>.
+and L<NetPacket>.
 
 =head2 Base Libraries
 
@@ -1290,46 +1294,80 @@ I<PerlMonks node about Net::Pcap>, L<http://perlmonks.org/?node_id=170648>
 
 =head1 AUTHORS
 
-Current maintainer is SE<eacute>bastien Aperghis-Tramoni (SAPER) 
-E<lt>sebastien@aperghis.netE<gt> with the help of Jean-Louis Morel (JLMOREL) 
-E<lt>jl_morel@bribes.orgE<gt> for WinPcap support. 
+Current maintainer is Sébastien Aperghis-Tramoni (SAPER) with the help
+of Tim Wilde (TWILDE).
 
-Previous authors & maintainers: 
+Complete list of authors & contributors:
 
 =over
 
-=item *
+=item * Bo Adler (BOADLER) E<lt>thumper (at) alumni.caltech.eduE<gt>
 
-Marco Carnut (KCARNUT) E<lt>kiko@tempest.com.brE<gt>
+=item * Craig Davison
 
-=item *
+=item * David Farrell
 
-Tim Potter (TIMPOTTER) E<lt>tpot@frungy.orgE<gt>
+=item * David N. Blank-Edelman E<lt>dnb (at) ccs.neu.eduE<gt>
 
-=item *
+=item * James Rouzier (ROUZIER)
 
-Bo Adler (BOADLER) E<lt>thumper@alumni.caltech.eduE<gt>
+=item * Jean-Louis Morel (JLMOREL) E<lt>jl_morel (at) bribes.orgE<gt>
 
-=item *
+=item * Marco Carnut (KCARNUT) E<lt>kiko (at) tempest.com.brE<gt>
 
-Peter Lister (PLISTER) E<lt>p.lister@cranfield.ac.ukE<gt>
+=item * Patrice Auffret (GOMOR)
+
+=item * Peter Lister (PLISTER) E<lt>p.lister (at) cranfield.ac.ukE<gt>
+
+=item * Rafaël Garcia-Suarez (RGARCIA)
+
+=item * Sébastien Aperghis-Tramoni (SAPER) E<lt>sebastien (at) aperghis.netE<gt>
+
+=item * Tim Potter (TIMPOTTER) E<lt>tpot (at) frungy.orgE<gt>
+
+=item * Tim Wilde (TWILDE)
 
 =back
 
 
+=head1 HISTORY
+
+The original version of C<Net::Pcap>, version 0.01, was written by
+Peter Lister using SWIG.
+
+Version 0.02 was created by Bo Adler with a few bugfixes but not
+uploaded to CPAN. It could be found at:
+L<http://www.buttsoft.com/~thumper/software/perl/Net-Pcap/>
+
+Versions 0.03 and 0.04 were created by Tim Potter who entirely
+rewrote C<Net::Pcap> using XS and wrote the documentation, with
+the help of David N. Blank-Edelman for testing and general polishing.
+
+Version 0.05 was released by Marco Carnut with fixes to make it
+work with Cygwin and WinPcap.
+
+Version 0.04.02 was independantly created by Jean-Louis Morel
+but not uploaded on the CPAN. It can be found here:
+L<http://www.bribes.org/perl/wnetpcap.html>
+
+Based on Tim Potter's version 0.04, it included fixes for WinPcap
+and added wrappers for several new libpcap functions as well as
+WinPcap specific functions.
+
+
 =head1 ACKNOWLEDGEMENTS
 
-To Paul Johnson for his module C<Devel::Cover> and his patience for 
-helping me using it with XS code, which revealed very useful for 
-writing more tests. 
+To Paul Johnson for his module L<Devel::Cover> and his patience for
+helping me using it with XS code, which revealed very useful for
+writing more tests.
 
-To the beta-testers: Jean-Louis Morel, Max Maischen, Philippe Bruhat, 
+To the beta-testers: Jean-Louis Morel, Max Maischen, Philippe Bruhat,
 David Morel, Scott Lanning, Rafael Garcia-Suarez, Karl Y. Pradene.
 
 
 =head1 COPYRIGHT & LICENSE
 
-Copyright (C) 2005, 2006, 2007, 2008, 2009 SE<eacute>bastien Aperghis-Tramoni.
+Copyright (C) 2005-2016 Sébastien Aperghis-Tramoni and contributors.
 All rights reserved. 
 
 Copyright (C) 2003 Marco Carnut. All rights reserved. 
